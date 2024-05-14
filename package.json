@@ -1,0 +1,50 @@
+{
+  "name": "autwork2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "codegen:dowload-database-types": "npx supabase gen types typescript --project-id oviggccdwljaffiauhsn --schema public > src/generated/types/database.ts",
+    "codegen:process-database-types": "npx better-supabase-types -i src/generated/types/database.ts -f -p .prettierrc.json",
+    "codegen:bootstrap-database-types": "npm run codegen:dowload-database-types && npm run codegen:process-database-types",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.13",
+    "@mui/lab": "^5.0.0-alpha.168",
+    "@mui/material": "^5.15.13",
+    "@supabase/supabase-js": "^2.39.8",
+    "@tanstack/react-query": "^5.28.0",
+    "@tanstack/react-router": "^1.19.13",
+    "@types/lodash-es": "^4.17.12",
+    "better-supabase-types": "^2.7.5",
+    "lodash-es": "^4.17.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.0"
+  },
+  "devDependencies": {
+    "@tanstack/router-devtools": "^1.19.13",
+    "@tanstack/router-vite-plugin": "^1.19.6",
+    "@types/node": "^20.11.27",
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "prettier": "3.2.5",
+    "supabase": "^1.150.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6",
+    "vite-plugin-svgr": "^4.2.0",
+    "vite-tsconfig-paths": "^4.3.1"
+  }
+}
