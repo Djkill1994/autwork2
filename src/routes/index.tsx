@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { authCheck } from "~/features/Auth/helpers/authCheck";
+import { authCheck } from "~/features/Auth/helpers";
 import { Box, Button } from "@mui/material";
-import { useGetUsersApi } from "~/features/Admin/api/useGetUsersApi";
+import { useGetUsersApi } from "~/features/Admin/api";
 
 const Index = () => {
   const { data } = useGetUsersApi();

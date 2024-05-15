@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { ApiKeys } from "~/libs/core/apiKeys";
-import { supabaseClient } from "~/libs/core/supabaseClient";
+import { ApiKeys } from "~/libs/core";
+import { supabaseClient } from "~/libs/core";
 
 export const useGetUsersApi = () =>
   useQuery({

@@ -1,0 +1,1 @@
+export { useGetUsersApi } from "./useGetUsersApi";

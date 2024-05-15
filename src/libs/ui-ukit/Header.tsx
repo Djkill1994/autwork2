@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { AppBar, Box, Button, Stack, Typography } from "@mui/material";
-
 import { useNavigate } from "@tanstack/react-router";
 
 export const Header: FC = () => {
@@ -13,10 +12,10 @@ export const Header: FC = () => {
         flexDirection="row"
         justifyContent="space-between"
         borderBottom="1px solid #dbdbdb"
-        p="0 10px"
+        p="4px 8px"
         gap="20px"
       >
-        <Typography>LOGO</Typography>
+        <Typography>Autwork</Typography>
         <Box m={1}></Box>
         <Stack flexDirection="row" gap={1}>
           <Button
@@ -26,15 +25,6 @@ export const Header: FC = () => {
           >
             Войти
           </Button>
-          {/*<Button*/}
-          {/*  color="secondary"*/}
-          {/*  variant="contained"*/}
-          {/*  onClick={() =>*/}
-          {/*    navigate(ROUTE_PATHS.Registration, { replace: true })*/}
-          {/*  }*/}
-          {/*>*/}
-          {/*  Регистрация*/}
-          {/*</Button>*/}
           <Button
             color="secondary"
             variant="contained"
