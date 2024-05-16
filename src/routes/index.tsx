@@ -5,6 +5,7 @@ import { useGetUsersApi } from "~/features/Admin/api";
 
 const Index = () => {
   const { data } = useGetUsersApi();
+
   return (
     <>
       <Box>HELLO DARLING!!!!!</Box>

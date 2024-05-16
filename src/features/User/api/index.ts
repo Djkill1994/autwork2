@@ -1,0 +1,1 @@
+export { useGetUserTableApi } from "./useGetUserTableApi";

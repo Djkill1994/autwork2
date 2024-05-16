@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "codegen:dowload-database-types": "npx supabase gen types typescript --project-id oviggccdwljaffiauhsn --schema public > src/generated/types/database.ts",
+    "codegen:dowload-database-types": "npx supabase gen types typescript --project-id rvisojbqhdlrlodvkndb --schema public > src/generated/types/database.ts",
     "codegen:process-database-types": "npx better-supabase-types -i src/generated/types/database.ts -f -p .prettierrc.json",
     "codegen:bootstrap-database-types": "npm run codegen:dowload-database-types && npm run codegen:process-database-types",
     "dev": "vite",
@@ -46,7 +46,6 @@
     "supabase": "^1.150.0",
     "typescript": "^5.2.2",
     "vite": "^5.1.6",
-    "vite-plugin-svgr": "^4.2.0",
     "vite-tsconfig-paths": "^4.3.1"
   }
 }

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { AppBar, Box, Button, Stack, Typography } from "@mui/material";
+import { AppBar, Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Header: FC = () => {
@@ -15,7 +15,7 @@ export const Header: FC = () => {
         p="4px 8px"
         gap="20px"
       >
-        <Typography>Autwork</Typography>
+        <Box component="img" src="/svg/autwork-logo.svg" />
         <Box m={1}></Box>
         <Stack flexDirection="row" gap={1}>
           <Button
@@ -28,7 +28,7 @@ export const Header: FC = () => {
           <Button
             color="secondary"
             variant="contained"
-            onClick={() => navigate({ to: "/" })}
+            onClick={() => navigate({ to: "/user" })}
           >
             Table
           </Button>

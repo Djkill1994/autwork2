@@ -1,3 +1,4 @@
 export enum ApiKeys {
-  getUsers= "getUsers"
+  getUsers = "getUsers",
+  getUserTable = "getUserTable",
 }
