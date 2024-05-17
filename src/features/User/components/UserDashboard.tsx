@@ -1,95 +1,77 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
-  type MRT_SortingState,
-  type MRT_RowVirtualizer,
 } from "material-react-table";
 import { useGetUserTableApi } from "~/features/User/api";
+import { Database } from "~/generated/types/database";
+import { Circle } from "@mui/icons-material";
 
 export const UserDashboard = () => {
-  const { data: userTable } = useGetUserTableApi();
-  const columns = useMemo<MRT_ColumnDef<userTable>[]>(
-    //column definitions...
+  const { data: userTable, isSuccess, isLoading } = useGetUserTableApi();
+  const columns = useMemo<MRT_ColumnDef<Database>[]>(
     () => [
       {
         accessorKey: "date",
         header: "Date",
-        size: 100,
+        size: 110,
+        enableEditing: false,
       },
       {
         accessorKey: "project",
         header: "Project",
-        size: 150,
+        size: 130,
+        enableEditing: true,
       },
       {
         accessorKey: "hours_from",
         header: "Hours from",
-        size: 80,
+        size: 100,
+        enableEditing: true,
       },
       {
         accessorKey: "hours_to",
         header: "Hours to",
-        size: 80,
+        size: 100,
+        enableEditing: true,
       },
       {
         accessorKey: "break_time",
         header: "Break time",
-        size: 80,
+        size: 100,
       },
       {
         accessorKey: "total_time",
         header: "Total time",
-        size: 80,
+        size: 100,
       },
     ],
     [],
-    //end
   );
 
-  //optionally access the underlying virtualizer instance
-  const rowVirtualizerInstanceRef = useRef<MRT_RowVirtualizer>(null);
-
-  const [data, setData] = useState<userTable[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+  const [data, setData] = useState<Database[]>([]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isSuccess) {
       setData(userTable);
-      setIsLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    //scroll to the top of the table when the sorting changes
-    try {
-      rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [sorting]);
 
   const table = useMaterialReactTable({
     columns,
     data,
-    defaultDisplayColumn: { enableResizing: true },
+    enableSorting: false,
+    enableColumnFilters: false,
+    enableColumnActions: false,
     enableBottomToolbar: false,
     enableColumnResizing: true,
     enableColumnVirtualization: true,
-    enableGlobalFilterModes: true,
     enablePagination: false,
     enableColumnPinning: true,
-    enableRowNumbers: true,
     enableRowVirtualization: true,
     muiTableContainerProps: { sx: { maxHeight: "600px" } },
-    onSortingChange: setSorting,
-    state: { isLoading, sorting },
-    rowVirtualizerInstanceRef,
-    rowVirtualizerOptions: { overscan: 5 },
-    columnVirtualizerOptions: { overscan: 2 },
   });
 
-  return <MaterialReactTable table={table} />;
+  return <>{isLoading ? <Circle /> : <MaterialReactTable table={table} />}</>;
 };
