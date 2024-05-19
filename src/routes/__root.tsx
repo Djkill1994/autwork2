@@ -5,7 +5,7 @@ import { Header } from "~/libs/ui-ukit";
 
 export const Route = createRootRoute({
   component: () => (
-    <Box height="100vh">
+    <Box height="100vh" sx={{ overflow: "hidden" }}>
       <Header />
       <Outlet />
       <TanStackRouterDevtools />

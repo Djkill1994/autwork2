@@ -1,15 +1,66 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
+  type MRT_Cell,
 } from "material-react-table";
-import { useGetUserTableApi } from "~/features/User/api";
+import { useGetUserTableApi, useUpdateDataTable } from "~/features/User/api";
 import { Database } from "~/generated/types/database";
-import { Circle } from "@mui/icons-material";
+import { Box, CircularProgress, Button } from "@mui/material";
 
 export const UserDashboard = () => {
   const { data: userTable, isSuccess, isLoading } = useGetUserTableApi();
+  const { mutateAsync: updateTable } = useUpdateDataTable();
+
+  const [editedCells, setEditedCells] = useState<
+    Record<string, Partial<Database>>
+  >([]);
+
+  const handleEditCellChange = (
+    row: Database,
+    key: keyof Database,
+    value: string,
+  ) => {
+    setEditedCells((prev) => {
+      // Найти индекс строки в массиве, если она уже существует
+      const existingIndex = prev.findIndex((item) => item.id === row.id);
+
+      if (existingIndex > -1) {
+        // Обновить существующую строку
+        const updatedRow = {
+          ...prev[existingIndex],
+          [key]: value,
+        };
+        // Вернуть новый массив с обновленной строкой
+        return [
+          ...prev.slice(0, existingIndex),
+          updatedRow,
+          ...prev.slice(existingIndex + 1),
+        ];
+      } else {
+        // Добавить новую строку в массив
+        return [
+          ...prev,
+          {
+            ...row,
+            [key]: value,
+          },
+        ];
+      }
+    });
+  };
+
+  const handleSave = () => {
+    updateTable(editedCells);
+    setEditedCells([]);
+  };
+
+  const totalHours =
+    isSuccess && userTable
+      ? userTable.reduce((total, row) => total + (row.total_hours ?? 0), 0)
+      : 0;
+
   const columns = useMemo<MRT_ColumnDef<Database>[]>(
     () => [
       {
@@ -22,56 +73,143 @@ export const UserDashboard = () => {
         accessorKey: "project",
         header: "Project",
         size: 130,
-        enableEditing: true,
+        muiEditTextFieldProps: ({ row }) => ({
+          type: "text",
+          required: true,
+          onChange: (event) =>
+            handleEditCellChange(row.original, "project", event.target.value),
+        }),
       },
       {
-        accessorKey: "hours_from",
+        accessorKey: "start_hour",
         header: "Hours from",
-        size: 100,
+        size: 110,
         enableEditing: true,
+        muiEditTextFieldProps: ({ row }) => ({
+          type: "time",
+          required: true,
+          onChange: (event) =>
+            setEditedCells({
+              ...editedCells,
+              ...row.original,
+              start_hour: event.target.value,
+            }),
+        }),
       },
       {
-        accessorKey: "hours_to",
+        accessorKey: "end_hour",
         header: "Hours to",
-        size: 100,
+        size: 110,
         enableEditing: true,
+        muiEditTextFieldProps: ({ row }) => ({
+          type: "time",
+          required: true,
+          onChange: (event) =>
+            setEditedCells({
+              ...editedCells,
+              ...row.original,
+              end_hour: event.target.value,
+            }),
+        }),
       },
       {
         accessorKey: "break_time",
         header: "Break time",
-        size: 100,
+        size: 110,
+        muiEditTextFieldProps: ({ row }) => ({
+          type: "time",
+          required: true,
+          onChange: (event) =>
+            setEditedCells({
+              ...editedCells,
+              ...row.original,
+              break_time: event.target.value,
+            }),
+        }),
       },
       {
-        accessorKey: "total_time",
+        accessorKey: "total_hours",
         header: "Total time",
-        size: 100,
+        size: 110,
+        enableEditing: false,
       },
     ],
-    [],
+    [editedCells],
   );
+  console.log(editedCells);
+  const handleAddRecord = () => {
+    // Logic for adding a new record based on date changes
+  };
 
-  const [data, setData] = useState<Database[]>([]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setData(userTable);
-    }
-  }, []);
-
+  // Настройка таблицы
   const table = useMaterialReactTable({
     columns,
-    data,
+    data: isSuccess && userTable,
+    initialState: {
+      columnPinning: {
+        left: ["date"],
+      },
+      rowPinning: {
+        top: ["Total"],
+      },
+    },
+    muiTableBodyCellProps: {
+      sx: {
+        display: "flex",
+        alignItems: "center",
+      },
+    },
+    editDisplayMode: "cell",
+    enableEditing: true,
     enableSorting: false,
     enableColumnFilters: false,
     enableColumnActions: false,
     enableBottomToolbar: false,
     enableColumnResizing: true,
-    enableColumnVirtualization: true,
     enablePagination: false,
-    enableColumnPinning: true,
     enableRowVirtualization: true,
-    muiTableContainerProps: { sx: { maxHeight: "600px" } },
+    renderTopToolbarCustomActions: () => (
+      <Box>
+        <Button variant="contained" onClick={handleSave} color="primary">
+          Сохранить
+        </Button>
+        <Button variant="contained" onClick={handleAddRecord}>
+          Добавить запись
+        </Button>
+      </Box>
+    ),
   });
 
-  return <>{isLoading ? <Circle /> : <MaterialReactTable table={table} />}</>;
+  return (
+    <>
+      {isLoading ? (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          height="100vh"
+        >
+          <CircularProgress color="success" />
+        </Box>
+      ) : (
+        <>
+          <MaterialReactTable table={table} />
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              width: "100%",
+              borderTop: "1px solid #ccc",
+              backgroundColor: "#f5f5f5",
+              padding: "16px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Box>Total: {totalHours} </Box>
+          </Box>
+        </>
+      )}
+    </>
+  );
 };

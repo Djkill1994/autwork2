@@ -9,5 +9,6 @@ export const useGetUserTableApi = () =>
       supabaseClient
         .from("user_table")
         .select("*")
+        .order("date", { ascending: true })
         .then(({ data }) => data),
   });
