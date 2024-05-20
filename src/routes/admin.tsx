@@ -1,11 +1,11 @@
-import { Box } from "@mui/material";
 import { createFileRoute } from "@tanstack/react-router";
+import { AdminDashboard } from "~/features/Admin/components";
 
 const Admin = () => {
   return (
-    <Box>
-      Admin
-    </Box>
+    <>
+      <AdminDashboard />
+    </>
   );
 };
 

@@ -1,22 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { authCheck } from "~/features/Auth/helpers";
-import { Box, Button } from "@mui/material";
-import { useGetUsersApi } from "~/features/Admin/api";
+import { AuthLoginForm } from "~/features/Auth/components";
+import { Box } from "@mui/material";
 
 const Index = () => {
-  const { data } = useGetUsersApi();
-
   return (
-    <>
-      <Box>HELLO DARLING!!!!!</Box>
-      <Button onClick={() => console.log(data)}>CLICK ME</Button>
-      {data?.map(({ phone, name, id }) => (
-        <Box key={id}>
-          <Box>{name}</Box>
-          <Box>{phone}</Box>
-        </Box>
-      ))}
-    </>
+    <Box display="flex" justifyContent="center" height="100%" p="70px">
+      <AuthLoginForm />
+    </Box>
   );
 };
 

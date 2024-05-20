@@ -3,52 +3,29 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
-  type MRT_Cell,
 } from "material-react-table";
 import { useGetUserTableApi, useUpdateDataTable } from "~/features/User/api";
 import { Database } from "~/generated/types/database";
 import { Box, CircularProgress, Button } from "@mui/material";
-
+//пофиксить ошибки , переписать мутацию
 export const UserDashboard = () => {
   const { data: userTable, isSuccess, isLoading } = useGetUserTableApi();
   const { mutateAsync: updateTable } = useUpdateDataTable();
 
-  const [editedCells, setEditedCells] = useState<
-    Record<string, Partial<Database>>
-  >([]);
+  const [editedCells, setEditedCells] = useState<Partial<Database>[]>([]);
 
   const handleEditCellChange = (
     row: Database,
     key: keyof Database,
     value: string,
   ) => {
-    setEditedCells((prev) => {
-      // Найти индекс строки в массиве, если она уже существует
-      const existingIndex = prev.findIndex((item) => item.id === row.id);
-
-      if (existingIndex > -1) {
-        // Обновить существующую строку
-        const updatedRow = {
-          ...prev[existingIndex],
-          [key]: value,
-        };
-        // Вернуть новый массив с обновленной строкой
-        return [
-          ...prev.slice(0, existingIndex),
-          updatedRow,
-          ...prev.slice(existingIndex + 1),
-        ];
-      } else {
-        // Добавить новую строку в массив
-        return [
-          ...prev,
-          {
-            ...row,
-            [key]: value,
-          },
-        ];
-      }
-    });
+    setEditedCells((prev) =>
+      prev.some((item) => item.id === row.id)
+        ? prev.map((item) =>
+            item.id === row.id ? { ...item, [key]: value } : item,
+          )
+        : [...prev, { ...row, [key]: value }],
+    );
   };
 
   const handleSave = () => {
@@ -89,11 +66,11 @@ export const UserDashboard = () => {
           type: "time",
           required: true,
           onChange: (event) =>
-            setEditedCells({
-              ...editedCells,
-              ...row.original,
-              start_hour: event.target.value,
-            }),
+            handleEditCellChange(
+              row.original,
+              "start_hour",
+              event.target.value,
+            ),
         }),
       },
       {
@@ -105,11 +82,7 @@ export const UserDashboard = () => {
           type: "time",
           required: true,
           onChange: (event) =>
-            setEditedCells({
-              ...editedCells,
-              ...row.original,
-              end_hour: event.target.value,
-            }),
+            handleEditCellChange(row.original, "end_hour", event.target.value),
         }),
       },
       {
@@ -120,11 +93,11 @@ export const UserDashboard = () => {
           type: "time",
           required: true,
           onChange: (event) =>
-            setEditedCells({
-              ...editedCells,
-              ...row.original,
-              break_time: event.target.value,
-            }),
+            handleEditCellChange(
+              row.original,
+              "break_time",
+              event.target.value,
+            ),
         }),
       },
       {
@@ -141,7 +114,6 @@ export const UserDashboard = () => {
     // Logic for adding a new record based on date changes
   };
 
-  // Настройка таблицы
   const table = useMaterialReactTable({
     columns,
     data: isSuccess && userTable,
