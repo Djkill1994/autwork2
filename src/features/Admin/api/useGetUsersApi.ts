@@ -6,8 +6,5 @@ export const useGetUsersApi = () =>
   useQuery({
     queryKey: [ApiKeys.getUsers],
     queryFn: async () =>
-      supabaseClient
-        .from("users")
-        .select()
-        .then(({ data }) => data),
+      supabaseClient.auth.admin.listUsers().then(({ data }) => data),
   });

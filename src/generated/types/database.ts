@@ -39,24 +39,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      users: {
-        Row: {
-          id: number;
-          name: string | null;
-          phone: string | null;
-        };
-        Insert: {
-          id?: number;
-          name?: string | null;
-          phone?: string | null;
-        };
-        Update: {
-          id?: number;
-          name?: string | null;
-          phone?: string | null;
-        };
-        Relationships: [];
-      };
     };
     Views: {
       [_ in never]: never;
@@ -162,7 +144,3 @@ export type InsertUserTable =
   Database["public"]["Tables"]["user_table"]["Insert"];
 export type UpdateUserTable =
   Database["public"]["Tables"]["user_table"]["Update"];
-
-export type Users = Database["public"]["Tables"]["users"]["Row"];
-export type InsertUsers = Database["public"]["Tables"]["users"]["Insert"];
-export type UpdateUsers = Database["public"]["Tables"]["users"]["Update"];
