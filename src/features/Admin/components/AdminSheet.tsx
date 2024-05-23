@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Stack } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { useGetUsersApi } from "~/features/Admin/api";
 import {
   MaterialReactTable,
@@ -11,6 +11,11 @@ import { Database } from "~/generated/types/database";
 export const AdminSheet = () => {
   const { data: usersData, isSuccess, isFetching } = useGetUsersApi();
   const [editedCells, setEditedCells] = useState<Partial<Database>[]>([]);
+
+  const handleSave = () => {
+    // updateTable(editedCells);
+    setEditedCells([]);
+  };
 
   const columns = useMemo<MRT_ColumnDef<Database>[]>(
     () => [
@@ -61,6 +66,13 @@ export const AdminSheet = () => {
     enableColumnResizing: true,
     enablePagination: false,
     enableRowVirtualization: true,
+    renderTopToolbarCustomActions: () => (
+      <Box>
+        <Button variant="contained" onClick={handleSave} color="primary">
+          Сохранить
+        </Button>
+      </Box>
+    ),
   });
 
   return (
