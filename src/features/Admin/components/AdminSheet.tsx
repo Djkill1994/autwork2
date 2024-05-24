@@ -29,12 +29,12 @@ export const AdminSheet = () => {
         accessorKey: "email",
         header: "Email",
         size: 130,
-        // muiEditTextFieldProps: ({ row }) => ({
-        //   type: "text",
-        //   required: true,
-        //   onChange: (event) =>
-        //     handleEditCellChange(row.original, "project", event.target.value),
-        // }),
+        muiEditTextFieldProps: ({ row }) => ({
+          type: "text",
+          required: true,
+          onChange: (event) =>
+            handleEditCellChange(row.original, "project", event.target.value),
+        }),
       },
     ],
     [editedCells],
