@@ -20,14 +20,40 @@ export const AuthRegistrationForm = () => {
   // const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<IRegistrationForm> = async (data) => {
-    await supabaseClient.auth.signUp({
+    // Регистрация нового пользователя
+    const { data: userData, error } = await supabaseClient.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
-        emailRedirectTo: "login",
-        data: { userName: data.userName },
+        data: { user_name: data.userName },
       },
     });
+
+    if (error) {
+      console.error("Ошибка при регистрации:", error.message);
+      return;
+    }
+
+    // Проверяем, зарегистрировался ли пользователь успешно
+    if (userData) {
+      console.log(userData?.user?.id, "user");
+      // Вызываем хранимую процедуру для создания таблицы для нового пользователя
+      const { error: rpcError } = await supabaseClient.rpc(
+        "create_user_table",
+        {
+          user_id: userData?.user?.id,
+        },
+      );
+
+      if (rpcError) {
+        console.error(
+          "Ошибка при создании таблицы для пользователя:",
+          rpcError.message,
+        );
+      } else {
+        console.log("Таблица успешно создана для пользователя");
+      }
+    }
   };
 
   return (

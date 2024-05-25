@@ -20,7 +20,7 @@ export const AdminSheet = () => {
   const columns = useMemo<MRT_ColumnDef<Database>[]>(
     () => [
       {
-        accessorKey: "userName",
+        accessorKey: "user_name",
         header: "User name",
         size: 110,
         enableEditing: false,
@@ -29,20 +29,20 @@ export const AdminSheet = () => {
         accessorKey: "email",
         header: "Email",
         size: 130,
-        muiEditTextFieldProps: ({ row }) => ({
-          type: "text",
-          required: true,
-          onChange: (event) =>
-            handleEditCellChange(row.original, "project", event.target.value),
-        }),
+        // muiEditTextFieldProps: ({ row }) => ({
+        //   type: "text",
+        //   required: true,
+        //   onChange: (event) =>
+        //     handleEditCellChange(row.original, "project", event.target.value),
+        // }),
       },
     ],
     [editedCells],
   );
-  console.log(usersData?.users?.map((data) => data));
+  console.log(usersData?.map((data) => data));
   const table = useMaterialReactTable({
     columns,
-    data: isSuccess && usersData?.users?.map((data) => data.user_metadata),
+    data: isSuccess && usersData?.map((data) => data),
     initialState: {
       columnPinning: {
         left: ["date"],

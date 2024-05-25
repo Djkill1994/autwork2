@@ -9,42 +9,43 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      user_table: {
+      users: {
         Row: {
-          break_time: string | null;
-          date: string | null;
-          end_hour: string | null;
-          id: number;
-          project: string | null;
-          start_hour: string | null;
-          total_hours: number | null;
+          email: string;
+          id: string;
+          user_name: string | null;
         };
         Insert: {
-          break_time?: string | null;
-          date?: string | null;
-          end_hour?: string | null;
-          id?: number;
-          project?: string | null;
-          start_hour?: string | null;
-          total_hours?: number | null;
+          email: string;
+          id: string;
+          user_name?: string | null;
         };
         Update: {
-          break_time?: string | null;
-          date?: string | null;
-          end_hour?: string | null;
-          id?: number;
-          project?: string | null;
-          start_hour?: string | null;
-          total_hours?: number | null;
+          email?: string;
+          id?: string;
+          user_name?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "users_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      create_user_table: {
+        Args: {
+          user_id: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;
@@ -139,8 +140,12 @@ export type Enums<
 
 // Schema: public
 // Tables
-export type UserTable = Database["public"]["Tables"]["user_table"]["Row"];
-export type InsertUserTable =
-  Database["public"]["Tables"]["user_table"]["Insert"];
-export type UpdateUserTable =
-  Database["public"]["Tables"]["user_table"]["Update"];
+export type Users = Database["public"]["Tables"]["users"]["Row"];
+export type InsertUsers = Database["public"]["Tables"]["users"]["Insert"];
+export type UpdateUsers = Database["public"]["Tables"]["users"]["Update"];
+
+// Functions
+export type ArgsCreateUserTable =
+  Database["public"]["Functions"]["create_user_table"]["Args"];
+export type ReturnTypeCreateUserTable =
+  Database["public"]["Functions"]["create_user_table"]["Returns"];

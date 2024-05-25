@@ -41,7 +41,7 @@ export const UserDashboard = () => {
   const columns = useMemo<MRT_ColumnDef<Database>[]>(
     () => [
       {
-        accessorKey: "date",
+        accessorKey: "day",
         header: "Date",
         size: 110,
         enableEditing: false,
@@ -58,7 +58,7 @@ export const UserDashboard = () => {
         }),
       },
       {
-        accessorKey: "start_hour",
+        accessorKey: "hours_from",
         header: "Hours from",
         size: 110,
         enableEditing: true,
@@ -68,13 +68,13 @@ export const UserDashboard = () => {
           onChange: (event) =>
             handleEditCellChange(
               row.original,
-              "start_hour",
+              "hours_from",
               event.target.value,
             ),
         }),
       },
       {
-        accessorKey: "end_hour",
+        accessorKey: "hours_to",
         header: "Hours to",
         size: 110,
         enableEditing: true,
@@ -82,7 +82,7 @@ export const UserDashboard = () => {
           type: "time",
           required: true,
           onChange: (event) =>
-            handleEditCellChange(row.original, "end_hour", event.target.value),
+            handleEditCellChange(row.original, "hours_to", event.target.value),
         }),
       },
       {
@@ -119,7 +119,7 @@ export const UserDashboard = () => {
     data: isSuccess && userTable,
     initialState: {
       columnPinning: {
-        left: ["date"],
+        left: ["day"],
       },
       rowPinning: {
         top: ["Total"],

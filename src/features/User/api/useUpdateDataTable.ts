@@ -4,8 +4,8 @@ import { supabaseClient } from "~/libs/core";
 interface IUseUpdateDataTable {
   id: number;
   project: string | null;
-  start_hour: string | null;
-  end_hour: string | null;
+  hours_from: string | null;
+  hours_to: string | null;
   break_time: string | null;
 }
 // ищменить мутацию , что бы обновлялся только один объект, переписать ресет на onSuccess
@@ -14,13 +14,23 @@ export const useUpdateDataTable = () => {
 
   return useMutation({
     mutationFn: async (data: IUseUpdateDataTable[]) => {
+      const {
+        data: { session },
+      } = await supabaseClient.auth.getSession();
+      if (!session) {
+        throw new Error("User is not authenticated");
+      }
+
+      const userId = session.user.id;
+
+      const tableName = `user_data_${userId.replace(/-/g, "_")}`;
       const updatePromises = data.map((update) =>
         supabaseClient
-          .from("user_table")
+          .from(tableName)
           .update({
             project: update.project,
-            start_hour: update.start_hour,
-            end_hour: update.end_hour,
+            hours_from: update.hours_from,
+            hours_to: update.hours_to,
             break_time: update.break_time,
           })
           .eq("id", update.id),
