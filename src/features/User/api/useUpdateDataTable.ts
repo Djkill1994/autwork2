@@ -23,10 +23,9 @@ export const useUpdateDataTable = () => {
 
       const userId = session.user.id;
 
-      const tableName = `user_data_${userId.replace(/-/g, "_")}`;
       const updatePromises = data.map((update) =>
         supabaseClient
-          .from(tableName)
+          .from("users_work_hours")
           .update({
             project: update.project,
             hours_from: update.hours_from,

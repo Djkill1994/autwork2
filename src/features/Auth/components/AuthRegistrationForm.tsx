@@ -33,26 +33,28 @@ export const AuthRegistrationForm = () => {
       console.error("Ошибка при регистрации:", error.message);
       return;
     }
-
-    // Проверяем, зарегистрировался ли пользователь успешно
     if (userData) {
-      console.log(userData?.user?.id, "user");
-      // Вызываем хранимую процедуру для создания таблицы для нового пользователя
-      const { error: rpcError } = await supabaseClient.rpc(
-        "create_user_table",
-        {
-          user_id: userData?.user?.id,
-        },
-      );
+      // Успешно зарегистрирован новый пользователь
+      console.log("Пользователь успешно зарегистрирован:", userData.user.id);
 
-      if (rpcError) {
+      // Добавление рабочих часов для нового пользователя
+      const { data: workHoursData, error: workHoursError } =
+        await supabaseClient.rpc("create_work_hours_for_user", {
+          user_id: userData.user.id,
+        });
+
+      if (workHoursError) {
         console.error(
-          "Ошибка при создании таблицы для пользователя:",
-          rpcError.message,
+          "Ошибка при добавлении рабочих часов для нового пользователя:",
+          workHoursError.message,
         );
-      } else {
-        console.log("Таблица успешно создана для пользователя");
+        return;
       }
+
+      console.log(
+        "Рабочие часы успешно добавлены для нового пользователя:",
+        workHoursData,
+      );
     }
   };
 

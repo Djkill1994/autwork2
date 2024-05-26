@@ -15,12 +15,11 @@ export const useGetUserTableApi = () =>
 
       const userId = session.user.id;
 
-      const tableName = `user_data_${userId.replace(/-/g, "_")}`;
-
       // Запрос к таблице авторизованного пользователя
       const { data, error } = await supabaseClient
-        .from(tableName)
+        .from("users_work_hours")
         .select("*")
+        .eq("user_id", userId)
         .order("day", { ascending: true });
 
       if (error) {

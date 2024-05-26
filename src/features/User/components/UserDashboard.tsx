@@ -7,6 +7,7 @@ import {
 import { useGetUserTableApi, useUpdateDataTable } from "~/features/User/api";
 import { Database } from "~/generated/types/database";
 import { Box, CircularProgress, Button } from "@mui/material";
+import { supabaseClient } from "~/libs/core";
 //пофиксить ошибки , переписать мутацию
 export const UserDashboard = () => {
   const { data: userTable, isSuccess, isLoading } = useGetUserTableApi();
@@ -114,6 +115,35 @@ export const UserDashboard = () => {
     // Logic for adding a new record based on date changes
   };
 
+  // Добавление рабочих часов для нового пользователя
+  const onTest = async () => {
+    const {
+      data: { session },
+    } = await supabaseClient.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const userId = session.user.id;
+    const { data: workHoursData, error: workHoursError } =
+      await supabaseClient.rpc("create_work_hours_for_user", {
+        user_id: userId,
+      });
+    console.log(typeof userId);
+    if (workHoursError) {
+      console.error(
+        "Ошибка при добавлении рабочих часов для нового пользователя:",
+        workHoursError.message,
+      );
+      return;
+    }
+
+    console.log(
+      "Рабочие часы успешно добавлены для нового пользователя:",
+      workHoursData,
+    );
+  };
+
   const table = useMaterialReactTable({
     columns,
     data: isSuccess && userTable,
@@ -147,6 +177,9 @@ export const UserDashboard = () => {
         </Button>
         <Button variant="contained" onClick={handleAddRecord}>
           Добавить запись
+        </Button>
+        <Button color="secondary" variant="contained" onClick={() => onTest()}>
+          таблица
         </Button>
       </Box>
     ),
