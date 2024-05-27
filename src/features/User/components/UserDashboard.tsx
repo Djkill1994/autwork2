@@ -6,13 +6,11 @@ import {
 } from "material-react-table";
 import { useGetUserTableApi, useUpdateDataTable } from "~/features/User/api";
 import { Database } from "~/generated/types/database";
-import { Box, CircularProgress, Button } from "@mui/material";
-import { supabaseClient } from "~/libs/core";
+import { Box, CircularProgress, Button, Stack } from "@mui/material";
 //пофиксить ошибки , переписать мутацию
 export const UserDashboard = () => {
   const { data: userTable, isSuccess, isLoading } = useGetUserTableApi();
   const { mutateAsync: updateTable } = useUpdateDataTable();
-
   const [editedCells, setEditedCells] = useState<Partial<Database>[]>([]);
 
   const handleEditCellChange = (
@@ -62,7 +60,6 @@ export const UserDashboard = () => {
         accessorKey: "hours_from",
         header: "Hours from",
         size: 110,
-        enableEditing: true,
         muiEditTextFieldProps: ({ row }) => ({
           type: "time",
           required: true,
@@ -78,7 +75,6 @@ export const UserDashboard = () => {
         accessorKey: "hours_to",
         header: "Hours to",
         size: 110,
-        enableEditing: true,
         muiEditTextFieldProps: ({ row }) => ({
           type: "time",
           required: true,
@@ -110,38 +106,9 @@ export const UserDashboard = () => {
     ],
     [editedCells],
   );
-  console.log(editedCells);
+
   const handleAddRecord = () => {
     // Logic for adding a new record based on date changes
-  };
-
-  // Добавление рабочих часов для нового пользователя
-  const onTest = async () => {
-    const {
-      data: { session },
-    } = await supabaseClient.auth.getSession();
-    if (!session) {
-      throw new Error("User is not authenticated");
-    }
-
-    const userId = session.user.id;
-    const { data: workHoursData, error: workHoursError } =
-      await supabaseClient.rpc("create_work_hours_for_user", {
-        user_id: userId,
-      });
-    console.log(typeof userId);
-    if (workHoursError) {
-      console.error(
-        "Ошибка при добавлении рабочих часов для нового пользователя:",
-        workHoursError.message,
-      );
-      return;
-    }
-
-    console.log(
-      "Рабочие часы успешно добавлены для нового пользователя:",
-      workHoursData,
-    );
   };
 
   const table = useMaterialReactTable({
@@ -172,14 +139,22 @@ export const UserDashboard = () => {
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
       <Box>
-        <Button variant="contained" onClick={handleSave} color="primary">
-          Сохранить
-        </Button>
+        {editedCells[0] && (
+          <Stack direction="row" gap={1}>
+            <Button variant="contained" onClick={handleSave} color="primary">
+              Сохранить
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setEditedCells([])}
+              color="primary"
+            >
+              Отменить
+            </Button>
+          </Stack>
+        )}
         <Button variant="contained" onClick={handleAddRecord}>
           Добавить запись
-        </Button>
-        <Button color="secondary" variant="contained" onClick={() => onTest()}>
-          таблица
         </Button>
       </Box>
     ),

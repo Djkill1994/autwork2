@@ -12,17 +12,32 @@ export type Database = {
       users: {
         Row: {
           email: string;
+          general_info: string | null;
           id: string;
+          notes: string | null;
+          project: string | null;
+          role: string | null;
+          total_hours: string | null;
           user_name: string | null;
         };
         Insert: {
           email: string;
+          general_info?: string | null;
           id: string;
+          notes?: string | null;
+          project?: string | null;
+          role?: string | null;
+          total_hours?: string | null;
           user_name?: string | null;
         };
         Update: {
           email?: string;
+          general_info?: string | null;
           id?: string;
+          notes?: string | null;
+          project?: string | null;
+          role?: string | null;
+          total_hours?: string | null;
           user_name?: string | null;
         };
         Relationships: [
@@ -35,12 +50,53 @@ export type Database = {
           },
         ];
       };
+      users_work_hours: {
+        Row: {
+          break_time: string | null;
+          day: string | null;
+          hours_from: string | null;
+          hours_to: string | null;
+          id: number;
+          project: string | null;
+          total_hours: number | null;
+          user_id: string;
+        };
+        Insert: {
+          break_time?: string | null;
+          day?: string | null;
+          hours_from?: string | null;
+          hours_to?: string | null;
+          id?: number;
+          project?: string | null;
+          total_hours?: number | null;
+          user_id: string;
+        };
+        Update: {
+          break_time?: string | null;
+          day?: string | null;
+          hours_from?: string | null;
+          hours_to?: string | null;
+          id?: number;
+          project?: string | null;
+          total_hours?: number | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "users_work_hours_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      create_user_table: {
+      create_work_hours_for_user: {
         Args: {
           user_id: string;
         };
@@ -144,8 +200,15 @@ export type Users = Database["public"]["Tables"]["users"]["Row"];
 export type InsertUsers = Database["public"]["Tables"]["users"]["Insert"];
 export type UpdateUsers = Database["public"]["Tables"]["users"]["Update"];
 
+export type UsersWorkHours =
+  Database["public"]["Tables"]["users_work_hours"]["Row"];
+export type InsertUsersWorkHours =
+  Database["public"]["Tables"]["users_work_hours"]["Insert"];
+export type UpdateUsersWorkHours =
+  Database["public"]["Tables"]["users_work_hours"]["Update"];
+
 // Functions
-export type ArgsCreateUserTable =
-  Database["public"]["Functions"]["create_user_table"]["Args"];
-export type ReturnTypeCreateUserTable =
-  Database["public"]["Functions"]["create_user_table"]["Returns"];
+export type ArgsCreateWorkHoursForUser =
+  Database["public"]["Functions"]["create_work_hours_for_user"]["Args"];
+export type ReturnTypeCreateWorkHoursForUser =
+  Database["public"]["Functions"]["create_work_hours_for_user"]["Returns"];

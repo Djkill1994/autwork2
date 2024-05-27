@@ -11,18 +11,8 @@ interface IUseUpdateDataTable {
 // ищменить мутацию , что бы обновлялся только один объект, переписать ресет на onSuccess
 export const useUpdateDataTable = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (data: IUseUpdateDataTable[]) => {
-      const {
-        data: { session },
-      } = await supabaseClient.auth.getSession();
-      if (!session) {
-        throw new Error("User is not authenticated");
-      }
-
-      const userId = session.user.id;
-
       const updatePromises = data.map((update) =>
         supabaseClient
           .from("users_work_hours")
