@@ -14,7 +14,6 @@ export const AdminSheet = () => {
   const [editedCells, setEditedCells] = useState<Partial<Database>[]>([]);
 
   const handleSave = () => {
-    console.log("saved");
     setEditedCells([]);
   };
 
@@ -23,7 +22,6 @@ export const AdminSheet = () => {
     key: keyof Database,
     value: string,
   ) => {
-    console.log("handle");
     setEditedCells((prev) =>
       prev.some((item) => item.id === row.id)
         ? prev.map((item) =>

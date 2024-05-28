@@ -17,44 +17,19 @@ export const AuthRegistrationForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<IRegistrationForm>();
-  // const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<IRegistrationForm> = async (data) => {
-    // Регистрация нового пользователя
-    const { data: userData, error } = await supabaseClient.auth.signUp({
+    const { data: userData } = await supabaseClient.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
         data: { user_name: data.userName },
       },
     });
-
-    if (error) {
-      console.error("Ошибка при регистрации:", error.message);
-      return;
-    }
     if (userData) {
-      // Успешно зарегистрирован новый пользователь
-      console.log("Пользователь успешно зарегистрирован:", userData.user.id);
-
-      // Добавление рабочих часов для нового пользователя
-      const { data: workHoursData, error: workHoursError } =
-        await supabaseClient.rpc("create_work_hours_for_user", {
-          user_id: userData.user.id,
-        });
-
-      if (workHoursError) {
-        console.error(
-          "Ошибка при добавлении рабочих часов для нового пользователя:",
-          workHoursError.message,
-        );
-        return;
-      }
-
-      console.log(
-        "Рабочие часы успешно добавлены для нового пользователя:",
-        workHoursData,
-      );
+      const { error } = await supabaseClient.rpc("create_work_hours_for_user", {
+        user_id: userData?.user?.id,
+      });
     }
   };
 
