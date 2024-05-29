@@ -1,5 +1,6 @@
 import { AppBar, Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "@tanstack/react-router";
+import { supabaseClient } from "~/libs/core";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -37,6 +38,16 @@ export const Header = () => {
               onClick={() => navigate({ to: "/admin" })}
             >
               Admin
+            </Button>
+            <Button
+              color="secondary"
+              variant="contained"
+              onClick={async () => {
+                await supabaseClient.auth.signOut();
+                await navigate({ to: "/" });
+              }}
+            >
+              Выйти
             </Button>
           </Stack>
         </Stack>

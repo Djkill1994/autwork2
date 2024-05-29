@@ -45,7 +45,7 @@ export const AuthLoginForm = () => {
             <TextField
               {...register("email", { required: true, pattern: EMAIL_REGEX })}
               error={!!errors.email}
-              helperText={!!errors.email && "email"}
+              helperText={!!errors.email && "Неверный формат email"}
               size="small"
               autoComplete="email"
               label={"email"}
@@ -56,7 +56,7 @@ export const AuthLoginForm = () => {
           <Grid item xs={12} width="100%">
             <FormInputPassword
               id="password"
-              error={errors.password && "password"}
+              error={errors.password && "Введите пароль"}
               label={"password"}
               inputProps={register("password", {
                 required: true,
