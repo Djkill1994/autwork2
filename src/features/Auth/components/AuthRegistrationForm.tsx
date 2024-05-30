@@ -27,7 +27,7 @@ export const AuthRegistrationForm = () => {
       },
     });
     if (userData) {
-      const { error } = await supabaseClient.rpc("create_work_hours_for_user", {
+      await supabaseClient.rpc("create_work_hours_for_user", {
         user_id: userData?.user?.id,
       });
     }

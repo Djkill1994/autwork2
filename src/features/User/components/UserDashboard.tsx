@@ -153,7 +153,12 @@ export const UserDashboard = () => {
             </Button>
           </Stack>
         )}
-        <Button variant="contained" onClick={handleAddRecord}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            table.setEditingCell();
+          }}
+        >
           Добавить запись
         </Button>
       </Box>
