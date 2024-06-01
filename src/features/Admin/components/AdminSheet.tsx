@@ -59,16 +59,7 @@ export const AdminSheet = () => {
         accessorKey: "total_hours",
         header: "Total hours",
         size: 110,
-        muiEditTextFieldProps: ({ row }) => ({
-          type: "text",
-          required: true,
-          onChange: (event) =>
-            handleEditCellChange(
-              row.original,
-              "total_hours",
-              event.target.value,
-            ),
-        }),
+        enableEditing: false,
       },
       {
         accessorKey: "general_info",

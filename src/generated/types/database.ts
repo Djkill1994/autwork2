@@ -17,7 +17,7 @@ export type Database = {
           notes: string | null;
           project: string | null;
           role: string | null;
-          total_hours: string | null;
+          total_hours: number | null;
           user_name: string | null;
         };
         Insert: {
@@ -27,7 +27,7 @@ export type Database = {
           notes?: string | null;
           project?: string | null;
           role?: string | null;
-          total_hours?: string | null;
+          total_hours?: number | null;
           user_name?: string | null;
         };
         Update: {
@@ -37,7 +37,7 @@ export type Database = {
           notes?: string | null;
           project?: string | null;
           role?: string | null;
-          total_hours?: string | null;
+          total_hours?: number | null;
           user_name?: string | null;
         };
         Relationships: [

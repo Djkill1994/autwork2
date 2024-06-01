@@ -1,21 +1,16 @@
 import { Box, Grid, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { FormInputPassword } from "~/libs/ui-kit";
-import { EMAIL_REGEX } from "~/libs/constans";
-import { LoadingButton } from "@mui/lab";
-import { useSignUpApi } from "../api";
 import { IRegistrationForm } from "~/features/Auth/api/useSignUpApi";
-import { IModalWindowProps } from "~/libs/ui-kit/ButtonModalWindow";
+import { FormInputPassword } from "~/libs/ui-kit";
+import { LoadingButton } from "@mui/lab";
+import { Database } from "~/generated/types/database";
 
-export const AuthRegistrationForm = ({
-  close,
-}: Pick<IModalWindowProps, "close">) => {
-  const { mutateAsync: signUpUser, isPending } = useSignUpApi();
+export const UserNewEntryForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IRegistrationForm>();
+  } = useForm<Pick<Database["public"]["Tables"]["users_work_hours"], "Row">>();
 
   const onSubmit: SubmitHandler<IRegistrationForm> = async (data) => {
     await signUpUser(data).then(close);
@@ -32,7 +27,7 @@ export const AuthRegistrationForm = ({
       >
         <Grid item xs={12} width="100%">
           <TextField
-            {...register("email", { required: true, pattern: EMAIL_REGEX })}
+            {...register("day", { required: true })}
             error={!!errors.email}
             helperText={!!errors.email && " Введите email правильного формата"}
             size="small"

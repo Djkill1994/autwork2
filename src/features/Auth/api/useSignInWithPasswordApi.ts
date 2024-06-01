@@ -22,11 +22,21 @@ export const useSignInWithPasswordApi = () => {
       if (error) {
         throw new Error(error.message);
       }
-      return data;
+      const userId = data.user.id;
+      const { data: userRoleData, error: roleError } = await supabaseClient
+        .from("users")
+        .select("role")
+        .eq("id", userId)
+        .single();
+
+      if (roleError) {
+        throw new Error(roleError.message);
+      }
+
+      return { ...data, role: userRoleData.role };
     },
     onSuccess: async (data) => {
       await queryClient.resetQueries();
-      console.log(data.user.user_metadata.user_name);
       toast.success(`Здравствуйте ${data.user.user_metadata.user_name}`);
     },
     onError: (error) => {

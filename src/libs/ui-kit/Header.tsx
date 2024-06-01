@@ -16,13 +16,7 @@ export const Header = () => {
           p="4px 8px"
           gap="20px"
         >
-          <Box
-            sx={{ "&:hover": { cursor: "pointer" } }}
-            component="img"
-            src="/svg/autwork-logo.svg"
-            width="20%"
-            onClick={() => navigate({ to: "/" })}
-          />
+          <Box component="img" src="/svg/autwork-logo.svg" width="20%" />
           <Box m={1}></Box>
           <Stack flexDirection="row" gap={1}>
             <Button

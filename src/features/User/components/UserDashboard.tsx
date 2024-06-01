@@ -7,16 +7,23 @@ import {
 import { useGetUserTableApi, useUpdateDataTable } from "~/features/User/api";
 import { Database } from "~/generated/types/database";
 import { Box, CircularProgress, Button, Stack } from "@mui/material";
+import { ButtonModalWindow } from "~/libs/ui-kit";
+import { useModal } from "~/libs/utils";
+import { UserNewEntryForm } from "~/features/User/components/UserNewEntryForm";
+
+export type TableRow = Database["public"]["Tables"]["users_work_hours"]["Row"];
+
 //пофиксить ошибки , переписать мутацию
 export const UserDashboard = () => {
   const { data: userTable, isSuccess, isLoading } = useGetUserTableApi();
   const { mutateAsync: updateTable } = useUpdateDataTable();
-  const [editedCells, setEditedCells] = useState<Partial<Database>[]>([]);
+  const [editedCells, setEditedCells] = useState<Partial<TableRow>[]>([]);
+  const { isOpened, open, close } = useModal();
 
-  const handleEditCellChange = (
-    row: Database,
-    key: keyof Database,
-    value: string,
+  const handleEditCellChange = <K extends keyof TableRow>(
+    row: TableRow,
+    key: K,
+    value: TableRow[K],
   ) => {
     setEditedCells((prev) =>
       prev.some((item) => item.id === row.id)
@@ -37,7 +44,7 @@ export const UserDashboard = () => {
       ? userTable.reduce((total, row) => total + (row.total_hours ?? 0), 0)
       : 0;
 
-  const columns = useMemo<MRT_ColumnDef<Database>[]>(
+  const columns = useMemo<MRT_ColumnDef<TableRow>[]>(
     () => [
       {
         accessorKey: "day",
@@ -99,7 +106,7 @@ export const UserDashboard = () => {
       },
       {
         accessorKey: "total_hours",
-        header: "Total time",
+        header: "Total hours",
         size: 110,
         enableEditing: false,
       },
@@ -107,13 +114,9 @@ export const UserDashboard = () => {
     [editedCells],
   );
 
-  const handleAddRecord = () => {
-    // Logic for adding a new record based on date changes
-  };
-
   const table = useMaterialReactTable({
     columns,
-    data: isSuccess && userTable,
+    data: isSuccess ? userTable : [],
     initialState: {
       columnPinning: {
         left: ["day"],
@@ -138,30 +141,31 @@ export const UserDashboard = () => {
     enablePagination: false,
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
-      <Box>
+      <Stack flexDirection="row" gap={1}>
+        <ButtonModalWindow
+          isOpened={isOpened}
+          close={close}
+          open={open}
+          buttonText={"Добавить запись"}
+          children={<UserNewEntryForm />}
+        />
         {editedCells[0] && (
           <Stack direction="row" gap={1}>
-            <Button variant="contained" onClick={handleSave} color="primary">
+            <Button variant="contained" onClick={handleSave} color="warning">
               Сохранить
             </Button>
             <Button
+              color="error"
               variant="contained"
-              onClick={() => setEditedCells([])}
-              color="primary"
+              onClick={() => {
+                setEditedCells([]);
+              }}
             >
               Отменить
             </Button>
           </Stack>
         )}
-        <Button
-          variant="contained"
-          onClick={() => {
-            table.setEditingCell();
-          }}
-        >
-          Добавить запись
-        </Button>
-      </Box>
+      </Stack>
     ),
   });
 

@@ -14,5 +14,3 @@ export const Route = createRootRoute({
     </Box>
   ),
 });
-
-// toast.error(action.payload.data.message);

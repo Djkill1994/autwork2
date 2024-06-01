@@ -20,8 +20,12 @@ export const AuthLoginForm = () => {
   } = useForm<ILoginForm>();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<ILoginForm> = (data) =>
-    login(data).then(() => navigate({ to: "/user" }));
+  const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
+    const user = await login(data);
+    if (user) {
+      navigate({ to: user?.role === "admin" ? "/admin" : "/user" });
+    }
+  };
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
