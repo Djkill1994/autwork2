@@ -5,33 +5,21 @@ import {
   type MRT_ColumnDef,
   useMaterialReactTable,
 } from "material-react-table";
-import { useMemo, useState } from "react";
-import { Database } from "~/generated/types/database";
+import { useMemo } from "react";
 import { AdminRegistreNewUser } from "~/features/Admin/components/AdminRegistreNewUser";
+import { IAdminTableRowTypes } from "~/libs/types";
+import { useHandleEditCellChange } from "~/libs/utils";
 
 export const AdminSheet = () => {
   const { data: usersData, isSuccess, isFetching } = useGetUsersApi();
-  const [editedCells, setEditedCells] = useState<Partial<Database>[]>([]);
+  const { editedCells, handleEditCellChange, setEditedCells } =
+    useHandleEditCellChange<IAdminTableRowTypes, keyof IAdminTableRowTypes>();
 
   const handleSave = () => {
     setEditedCells([]);
   };
 
-  const handleEditCellChange = (
-    row: Database,
-    key: keyof Database,
-    value: string,
-  ) => {
-    setEditedCells((prev) =>
-      prev.some((item) => item.id === row.id)
-        ? prev.map((item) =>
-            item.id === row.id ? { ...item, [key]: value } : item,
-          )
-        : [...prev, { ...row, [key]: value }],
-    );
-  };
-
-  const columns = useMemo<MRT_ColumnDef<Database>[]>(
+  const columns = useMemo<MRT_ColumnDef<IAdminTableRowTypes>[]>(
     () => [
       {
         accessorKey: "user_name",
@@ -104,7 +92,7 @@ export const AdminSheet = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: isSuccess && usersData,
+    data: isSuccess && usersData !== null ? usersData : [],
     initialState: {
       columnPinning: {
         left: ["user_name"],

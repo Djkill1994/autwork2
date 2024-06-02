@@ -15,7 +15,6 @@ export const useGetUserTableApi = () =>
 
       const userId = session.user.id;
 
-      // Запрос к таблице авторизованного пользователя
       const { data, error } = await supabaseClient
         .from("users_work_hours")
         .select("*")

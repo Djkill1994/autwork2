@@ -1,38 +1,22 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from "material-react-table";
-import { useGetUserTableApi, useUpdateDataTable } from "~/features/User/api";
-import { Database } from "~/generated/types/database";
+import { useGetUserTableApi, useUpdateDataTableApi } from "~/features/User/api";
 import { Box, CircularProgress, Button, Stack } from "@mui/material";
 import { ButtonModalWindow } from "~/libs/ui-kit";
-import { useModal } from "~/libs/utils";
+import { useHandleEditCellChange, useModal } from "~/libs/utils";
 import { UserNewEntryForm } from "~/features/User/components/UserNewEntryForm";
+import { IUserTableRowTypes } from "~/libs/types";
 
-export type TableRow = Database["public"]["Tables"]["users_work_hours"]["Row"];
-
-//пофиксить ошибки , переписать мутацию
 export const UserDashboard = () => {
   const { data: userTable, isSuccess, isLoading } = useGetUserTableApi();
-  const { mutateAsync: updateTable } = useUpdateDataTable();
-  const [editedCells, setEditedCells] = useState<Partial<TableRow>[]>([]);
+  const { mutateAsync: updateTable } = useUpdateDataTableApi();
+  const { editedCells, handleEditCellChange, setEditedCells } =
+    useHandleEditCellChange<IUserTableRowTypes, keyof IUserTableRowTypes>();
   const { isOpened, open, close } = useModal();
-
-  const handleEditCellChange = <K extends keyof TableRow>(
-    row: TableRow,
-    key: K,
-    value: TableRow[K],
-  ) => {
-    setEditedCells((prev) =>
-      prev.some((item) => item.id === row.id)
-        ? prev.map((item) =>
-            item.id === row.id ? { ...item, [key]: value } : item,
-          )
-        : [...prev, { ...row, [key]: value }],
-    );
-  };
 
   const handleSave = () => {
     updateTable(editedCells);
@@ -44,7 +28,7 @@ export const UserDashboard = () => {
       ? userTable.reduce((total, row) => total + (row.total_hours ?? 0), 0)
       : 0;
 
-  const columns = useMemo<MRT_ColumnDef<TableRow>[]>(
+  const columns = useMemo<MRT_ColumnDef<IUserTableRowTypes>[]>(
     () => [
       {
         accessorKey: "day",
@@ -146,9 +130,10 @@ export const UserDashboard = () => {
           isOpened={isOpened}
           close={close}
           open={open}
-          buttonText={"Добавить запись"}
-          children={<UserNewEntryForm />}
-        />
+          buttonText="Добавить запись"
+        >
+          <UserNewEntryForm userTable={userTable} />
+        </ButtonModalWindow>
         {editedCells[0] && (
           <Stack direction="row" gap={1}>
             <Button variant="contained" onClick={handleSave} color="warning">

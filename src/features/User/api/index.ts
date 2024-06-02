@@ -1,2 +1,2 @@
 export { useGetUserTableApi } from "./useGetUserTableApi";
-export { useUpdateDataTable } from "./useUpdateDataTable";
+export { useUpdateDataTableApi } from "./useUpdateDataTableApi";

@@ -1,23 +1,38 @@
 import { Box, Grid, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { IRegistrationForm } from "~/features/Auth/api/useSignUpApi";
-import { FormInputPassword } from "~/libs/ui-kit";
 import { LoadingButton } from "@mui/lab";
-import { Database } from "~/generated/types/database";
+import { IUserTableRowTypes } from "~/libs/types";
 
-export const UserNewEntryForm = () => {
+interface UserData {
+  userTable?: IUserTableRowTypes[];
+}
+
+export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Pick<Database["public"]["Tables"]["users_work_hours"], "Row">>();
+  } = useForm<IUserTableRowTypes>({
+    defaultValues: {
+      day: new Date().toISOString().split("T")[0],
+    },
+  });
 
-  const onSubmit: SubmitHandler<IRegistrationForm> = async (data) => {
-    await signUpUser(data).then(close);
+  const onSubmit: SubmitHandler<IUserTableRowTypes> = async (data) => {
+    console.log(userTable.find(({ day }) => day === data.day)?.id);
+    console.log({
+      ...data,
+      id: userTable.find(({ day }) => day === data.day)?.id,
+    });
   };
 
+  const lastEntryWithProject = userTable
+    .filter((entry) => entry.project !== null)
+    .sort((a, b) => b.project!.localeCompare(a.project!))
+    .shift();
+
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
       <Grid
         container
         gap="10px"
@@ -28,37 +43,87 @@ export const UserNewEntryForm = () => {
         <Grid item xs={12} width="100%">
           <TextField
             {...register("day", { required: true })}
-            error={!!errors.email}
-            helperText={!!errors.email && " Введите email правильного формата"}
+            error={!!errors.day}
+            helperText={!!errors.day && " Введите day правильного формата"}
             size="small"
-            autoComplete="email"
-            label={"email"}
+            type="date"
+            autoComplete="day"
             fullWidth
             color="success"
           />
         </Grid>
         <Grid item xs={12} width="100%">
           <TextField
-            {...register("userName", { required: true })}
-            error={!!errors.userName}
-            helperText={!!errors.userName && "Введите имя пользователя"}
+            {...register("project", { required: true })}
+            error={!!errors.project}
+            helperText={
+              !!errors.project && " Введите project правильного формата"
+            }
             size="small"
-            label={"Имя пользователя"}
-            autoComplete="fullName"
+            autoComplete="project"
+            label={"project"}
             fullWidth
+            defaultValue={
+              lastEntryWithProject ? lastEntryWithProject.project : ""
+            }
             color="success"
           />
         </Grid>
         <Grid item xs={12} width="100%">
-          <FormInputPassword
-            id="password"
-            error={errors.password && "Введите пароль"}
-            label={"Пароль"}
-            inputProps={register("password", {
-              required: true,
-            })}
+          <TextField
+            {...register("hours_from", { required: true })}
+            error={!!errors.hours_from}
+            helperText={
+              !!errors.hours_from && " Введите hours_from правильного формата"
+            }
+            size="small"
+            autoComplete="hours_from"
+            label={"hours_from"}
+            fullWidth
+            color="success"
+            type="time"
+            defaultValue={
+              lastEntryWithProject ? lastEntryWithProject.hours_from : ""
+            }
           />
         </Grid>
+        <Grid item xs={12} width="100%">
+          <TextField
+            {...register("hours_to", { required: true })}
+            error={!!errors.hours_to}
+            helperText={
+              !!errors.hours_to && " Введите hours_to правильного формата"
+            }
+            size="small"
+            autoComplete="hours_to"
+            label={"hours_to"}
+            fullWidth
+            color="success"
+            type="time"
+            defaultValue={
+              lastEntryWithProject ? lastEntryWithProject.hours_to : ""
+            }
+          />
+        </Grid>
+        <Grid item xs={12} width="100%">
+          <TextField
+            {...register("break_time", { required: true })}
+            error={!!errors.break_time}
+            helperText={
+              !!errors.break_time && " Введите break_time правильного формата"
+            }
+            size="small"
+            autoComplete="break_time"
+            label={"break_time"}
+            fullWidth
+            color="success"
+            type="time"
+            defaultValue={
+              lastEntryWithProject ? lastEntryWithProject.break_time : ""
+            }
+          />
+        </Grid>
+
         <Grid item xs={12} width="100%">
           <LoadingButton
             type="submit"
@@ -66,7 +131,6 @@ export const UserNewEntryForm = () => {
             sx={{ mt: 3 }}
             fullWidth
             color="secondary"
-            loading={isPending}
           >
             Зарегистрировать
           </LoadingButton>
