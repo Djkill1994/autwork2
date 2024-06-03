@@ -2,6 +2,8 @@ import { Box, Grid, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import { IUserTableRowTypes } from "~/libs/types";
+import { useUpdateDataTableApi } from "~/features/User/api";
+import { supabaseClient } from "~/libs/core";
 
 interface UserData {
   userTable?: IUserTableRowTypes[];
@@ -19,11 +21,26 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
   });
 
   const onSubmit: SubmitHandler<IUserTableRowTypes> = async (data) => {
+    await supabaseClient
+      .from("users_work_hours")
+      .update({
+        project: data.project,
+        hours_from: data.hours_from,
+        hours_to: data.hours_to,
+        break_time: data.break_time,
+      })
+      .eq("id", {
+        ...data,
+        id: userTable.find(({ day }) => day === data.day)?.id,
+      });
     console.log(userTable.find(({ day }) => day === data.day)?.id);
-    console.log({
-      ...data,
-      id: userTable.find(({ day }) => day === data.day)?.id,
-    });
+    console.log(
+      {
+        ...data,
+        id: userTable.find(({ day }) => day === data.day)?.id,
+      },
+      "DATA TYT",
+    );
   };
 
   const lastEntryWithProject = userTable
@@ -132,7 +149,7 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
             fullWidth
             color="secondary"
           >
-            Зарегистрировать
+            Отправить
           </LoadingButton>
         </Grid>
       </Grid>
