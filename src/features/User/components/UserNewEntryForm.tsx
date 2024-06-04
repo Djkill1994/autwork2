@@ -2,7 +2,6 @@ import { Box, Grid, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import { IUserTableRowTypes } from "~/libs/types";
-import { useUpdateDataTableApi } from "~/features/User/api";
 import { supabaseClient } from "~/libs/core";
 
 interface UserData {
@@ -21,6 +20,7 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
   });
 
   const onSubmit: SubmitHandler<IUserTableRowTypes> = async (data) => {
+    const cellId: number = userTable.find(({ day }) => day === data.day)?.id;
     await supabaseClient
       .from("users_work_hours")
       .update({
@@ -29,24 +29,14 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
         hours_to: data.hours_to,
         break_time: data.break_time,
       })
-      .eq("id", {
-        ...data,
-        id: userTable.find(({ day }) => day === data.day)?.id,
-      });
-    console.log(userTable.find(({ day }) => day === data.day)?.id);
-    console.log(
-      {
-        ...data,
-        id: userTable.find(({ day }) => day === data.day)?.id,
-      },
-      "DATA TYT",
-    );
+      .eq("id", cellId);
   };
 
   const lastEntryWithProject = userTable
     .filter((entry) => entry.project !== null)
     .sort((a, b) => b.project!.localeCompare(a.project!))
     .shift();
+  console.log(lastEntryWithProject);
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -61,7 +51,7 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
           <TextField
             {...register("day", { required: true })}
             error={!!errors.day}
-            helperText={!!errors.day && " Введите day правильного формата"}
+            helperText={!!errors.day && " Введите дату"}
             size="small"
             type="date"
             autoComplete="day"
@@ -73,9 +63,7 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
           <TextField
             {...register("project", { required: true })}
             error={!!errors.project}
-            helperText={
-              !!errors.project && " Введите project правильного формата"
-            }
+            helperText={!!errors.project && " Введите название проекта"}
             size="small"
             autoComplete="project"
             label={"project"}
@@ -90,9 +78,7 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
           <TextField
             {...register("hours_from", { required: true })}
             error={!!errors.hours_from}
-            helperText={
-              !!errors.hours_from && " Введите hours_from правильного формата"
-            }
+            helperText={!!errors.hours_from && " Введите время начала работы"}
             size="small"
             autoComplete="hours_from"
             label={"hours_from"}
@@ -108,9 +94,7 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
           <TextField
             {...register("hours_to", { required: true })}
             error={!!errors.hours_to}
-            helperText={
-              !!errors.hours_to && " Введите hours_to правильного формата"
-            }
+            helperText={!!errors.hours_to && " Введите время окончания работы"}
             size="small"
             autoComplete="hours_to"
             label={"hours_to"}
@@ -126,9 +110,7 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
           <TextField
             {...register("break_time", { required: true })}
             error={!!errors.break_time}
-            helperText={
-              !!errors.break_time && " Введите break_time правильного формата"
-            }
+            helperText={!!errors.break_time && " Введите время перерыва"}
             size="small"
             autoComplete="break_time"
             label={"break_time"}

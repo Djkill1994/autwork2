@@ -17,33 +17,16 @@ export const Header = () => {
           gap="20px"
         >
           <Box component="img" src="/svg/autwork-logo.svg" width="20%" />
-          <Box m={1}></Box>
-          <Stack flexDirection="row" gap={1}>
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={() => navigate({ to: "/user" })}
-            >
-              Table
-            </Button>
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={() => navigate({ to: "/admin" })}
-            >
-              Admin
-            </Button>
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={async () => {
-                await supabaseClient.auth.signOut();
-                await navigate({ to: "/" });
-              }}
-            >
-              Выйти
-            </Button>
-          </Stack>
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={async () => {
+              await supabaseClient.auth.signOut();
+              await navigate({ to: "/" });
+            }}
+          >
+            Выйти
+          </Button>
         </Stack>
       </AppBar>
     </>
