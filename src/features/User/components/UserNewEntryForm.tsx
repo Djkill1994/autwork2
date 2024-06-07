@@ -20,7 +20,8 @@ export const UserNewEntryForm = ({ userTable = [] }: UserData) => {
   });
 
   const onSubmit: SubmitHandler<IUserTableRowTypes> = async (data) => {
-    const cellId: number = userTable.find(({ day }) => day === data.day)?.id;
+    const cellId: number =
+      userTable.find(({ day }) => day === data.day)?.id ?? 0;
     await supabaseClient
       .from("users_work_hours")
       .update({

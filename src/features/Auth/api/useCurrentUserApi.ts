@@ -7,9 +7,6 @@ export const useCurrentUserApi = () =>
     queryFn: async () => {
       const { data } = await supabaseClient.auth.getUser();
 
-      return {
-        email: data.user?.email,
-        userName: data.user?.user_metadata.userName,
-      };
+      return data;
     },
   });

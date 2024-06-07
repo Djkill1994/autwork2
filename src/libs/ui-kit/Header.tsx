@@ -1,10 +1,10 @@
 import { AppBar, Box, Button, Stack } from "@mui/material";
-import { useNavigate } from "@tanstack/react-router";
-import { supabaseClient } from "~/libs/core";
+import { useCurrentUserApi, useSignOutApi } from "~/features/Auth/api";
 
 export const Header = () => {
-  const navigate = useNavigate();
-
+  const { data } = useCurrentUserApi();
+  const { mutateAsync: signOut } = useSignOutApi();
+  console.log(data);
   return (
     <>
       <AppBar position="sticky">
@@ -17,16 +17,15 @@ export const Header = () => {
           gap="20px"
         >
           <Box component="img" src="/svg/autwork-logo.svg" width="20%" />
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={async () => {
-              await supabaseClient.auth.signOut();
-              await navigate({ to: "/" });
-            }}
-          >
-            Выйти
-          </Button>
+          {data?.user?.id && (
+            <Button
+              color="secondary"
+              variant="contained"
+              onClick={() => signOut()}
+            >
+              Выйти
+            </Button>
+          )}
         </Stack>
       </AppBar>
     </>

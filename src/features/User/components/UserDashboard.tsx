@@ -170,8 +170,7 @@ export const UserDashboard = () => {
           <MaterialReactTable table={table} />
           <Box
             sx={{
-              position: "absolute",
-              bottom: 0,
+              position: "sticky",
               width: "100%",
               borderTop: "1px solid #ccc",
               backgroundColor: "#f5f5f5",
