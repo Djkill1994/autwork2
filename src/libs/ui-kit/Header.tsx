@@ -4,7 +4,7 @@ import { useCurrentUserApi, useSignOutApi } from "~/features/Auth/api";
 export const Header = () => {
   const { data } = useCurrentUserApi();
   const { mutateAsync: signOut } = useSignOutApi();
-  console.log(data);
+
   return (
     <>
       <AppBar position="sticky">

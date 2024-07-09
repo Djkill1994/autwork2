@@ -6,7 +6,6 @@ export const useCurrentUserApi = () =>
     queryKey: [ApiKeys.currentUser],
     queryFn: async () => {
       const { data } = await supabaseClient.auth.getUser();
-
       return data;
     },
   });

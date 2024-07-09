@@ -1,15 +1,12 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ApiKeys, supabaseClient } from "~/libs/core";
+import { useMutation } from "@tanstack/react-query";
+import { supabaseClient } from "~/libs/core";
+import { useNavigate } from "@tanstack/react-router";
 
 export const useSignOutApi = () => {
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [ApiKeys.currentUser] });
-    },
-    mutationFn: async () => {
-      await supabaseClient.auth.signOut();
-    },
+    mutationFn: () => supabaseClient.auth.signOut(),
+    onSuccess: () => navigate({ to: "/" }),
   });
 };

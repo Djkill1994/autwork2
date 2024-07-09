@@ -21,7 +21,6 @@ export const authGuard = async (location: ParsedLocation) => {
     .single();
 
   if (!userData || !userData.role) {
-    console.error("Role not found for user:", userData);
     return;
   }
 

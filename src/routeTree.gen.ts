@@ -11,25 +11,31 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as UserImport } from './routes/user'
-import { Route as AdminImport } from './routes/admin'
+import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
+import { Route as AuthUserImport } from './routes/_auth.user'
+import { Route as AuthAdminImport } from './routes/_auth.admin'
 
 // Create/Update Routes
 
-const UserRoute = UserImport.update({
-  path: '/user',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AdminRoute = AdminImport.update({
-  path: '/admin',
+const AuthRoute = AuthImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRoute,
 } as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AuthUserRoute = AuthUserImport.update({
+  path: '/user',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthAdminRoute = AuthAdminImport.update({
+  path: '/admin',
+  getParentRoute: () => AuthRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -43,19 +49,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
-    '/user': {
-      id: '/user'
+    '/_auth/admin': {
+      id: '/_auth/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthAdminImport
+      parentRoute: typeof AuthImport
+    }
+    '/_auth/user': {
+      id: '/_auth/user'
       path: '/user'
       fullPath: '/user'
-      preLoaderRoute: typeof UserImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthUserImport
+      parentRoute: typeof AuthImport
     }
   }
 }
@@ -64,8 +77,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
-  AdminRoute,
-  UserRoute,
+  AuthRoute: AuthRoute.addChildren({ AuthAdminRoute, AuthUserRoute }),
 })
 
 /* prettier-ignore-end */

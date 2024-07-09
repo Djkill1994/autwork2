@@ -3,8 +3,6 @@ import { ApiKeys, supabaseClient } from "~/libs/core";
 import { IUserTableRowTypes } from "~/libs/types";
 import { toast } from "react-hot-toast";
 
-// обновлять таблицу после каждого измеения необходимо, что бы на сервере totalHours считал время
-
 export const useUpdateDataTableApi = () => {
   const queryClient = useQueryClient();
   return useMutation({

@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 
 export const Route = createRootRoute({
   component: () => (
-    <Box height="100vh">
+    <Box>
       <Toaster position="top-right" />
       <Header />
       <Outlet />

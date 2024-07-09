@@ -17,5 +17,19 @@ export const theme = createTheme({
         },
       },
     },
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          overflow: "hidden",
+        },
+      },
+    },
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          maxHeight: "clamp(350px, calc(100vh - 105px), 9999px) !important",
+        },
+      },
+    },
   },
 });

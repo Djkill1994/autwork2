@@ -5,7 +5,13 @@ import {
   type MRT_ColumnDef,
 } from "material-react-table";
 import { useGetUserTableApi, useUpdateDataTableApi } from "~/features/User/api";
-import { Box, CircularProgress, Button, Stack } from "@mui/material";
+import {
+  CircularProgress,
+  Typography,
+  Box,
+  Button,
+  Stack,
+} from "@mui/material";
 import { ButtonModalWindow } from "~/libs/ui-kit";
 import { useHandleEditCellChange, useModal } from "~/libs/utils";
 import { UserNewEntryForm } from "~/features/User/components/UserNewEntryForm";
@@ -27,6 +33,12 @@ export const UserDashboard = () => {
     isSuccess && userTable
       ? userTable.reduce((total, row) => total + (row.total_hours ?? 0), 0)
       : 0;
+
+  const formatTime = (time: string) => {
+    if (!time) return "";
+    const [hours, minutes] = time.split(":");
+    return `${hours}:${minutes}`;
+  };
 
   const columns = useMemo<MRT_ColumnDef<IUserTableRowTypes>[]>(
     () => [
@@ -61,6 +73,7 @@ export const UserDashboard = () => {
               event.target.value,
             ),
         }),
+        Cell: ({ cell }) => formatTime(cell.getValue() as string),
       },
       {
         accessorKey: "hours_to",
@@ -72,6 +85,7 @@ export const UserDashboard = () => {
           onChange: (event) =>
             handleEditCellChange(row.original, "hours_to", event.target.value),
         }),
+        Cell: ({ cell }) => formatTime(cell.getValue() as string),
       },
       {
         accessorKey: "break_time",
@@ -87,6 +101,7 @@ export const UserDashboard = () => {
               event.target.value,
             ),
         }),
+        Cell: ({ cell }) => formatTime(cell.getValue() as string),
       },
       {
         accessorKey: "total_hours",
@@ -125,31 +140,36 @@ export const UserDashboard = () => {
     enablePagination: false,
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
-      <Stack flexDirection="row" gap={1}>
-        <ButtonModalWindow
-          isOpened={isOpened}
-          close={close}
-          open={open}
-          buttonText="Добавить запись"
-        >
-          <UserNewEntryForm userTable={userTable} />
-        </ButtonModalWindow>
-        {editedCells[0] && (
-          <Stack direction="row" gap={1}>
-            <Button variant="contained" onClick={handleSave} color="warning">
-              Сохранить
-            </Button>
-            <Button
-              color="error"
-              variant="contained"
-              onClick={() => {
-                setEditedCells([]);
-              }}
-            >
-              Отменить
-            </Button>
-          </Stack>
-        )}
+      <Stack flexDirection="row" alignItems="center" width="100%">
+        <Stack flexDirection="row" gap={1}>
+          <ButtonModalWindow
+            isOpened={isOpened}
+            close={close}
+            open={open}
+            buttonText="Добавить запись"
+          >
+            <UserNewEntryForm userTable={userTable} close={close} />
+          </ButtonModalWindow>
+          {editedCells[0] && (
+            <Stack direction="row" gap={1}>
+              <Button variant="contained" onClick={handleSave} color="warning">
+                Сохранить
+              </Button>
+              <Button
+                color="error"
+                variant="contained"
+                onClick={() => {
+                  setEditedCells([]);
+                }}
+              >
+                Отменить
+              </Button>
+            </Stack>
+          )}
+        </Stack>
+        <Typography margin="0 auto" fontSize="16px" fontWeight="800">
+          Total: {totalHours}
+        </Typography>
       </Stack>
     ),
   });
@@ -157,30 +177,12 @@ export const UserDashboard = () => {
   return (
     <>
       {isLoading ? (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          height="100vh"
-        >
+        <Box display="flex" alignItems="center" justifyContent="center">
           <CircularProgress color="success" />
         </Box>
       ) : (
         <>
           <MaterialReactTable table={table} />
-          <Box
-            sx={{
-              position: "sticky",
-              width: "100%",
-              borderTop: "1px solid #ccc",
-              backgroundColor: "#f5f5f5",
-              padding: "16px",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Box>Total: {totalHours} </Box>
-          </Box>
         </>
       )}
     </>
